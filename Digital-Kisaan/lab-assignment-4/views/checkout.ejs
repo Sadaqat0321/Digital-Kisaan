@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Checkout</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .checkout-box { max-width: 600px; margin: 50px auto; padding: 40px; text-align: center; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-family: sans-serif; }
+        .btn-primary { background: #28a745; color: white; border: none; padding: 12px 24px; font-size: 1.1rem; border-radius: 5px; cursor: pointer; transition: 0.3s; margin-top: 20px;}
+        .btn-primary:hover { background: #218838; }
+    </style>
+</head>
+<body style="background: #f4f6f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0;">
+    <div class="checkout-box">
+        <h2 style="color: #333; margin-bottom: 20px;">Secure Checkout</h2>
+        <p style="color: #555; font-size: 1.1rem;">Welcome to the secure checkout, <strong><%= user.name %></strong>!</p>
+        <p style="color: #666; margin-bottom: 30px;">Your cart items are ready for processing.</p>
+        <button class="btn-primary" onclick="alert('Order placed successfully (Mock)!')">Confirm & Place Order</button>
+        <br><br><br>
+        <a href="/products" style="color: #28a745; text-decoration: none; font-weight: bold;">← Back to Marketplace</a>
+    </div>
+</body>
+</html>
