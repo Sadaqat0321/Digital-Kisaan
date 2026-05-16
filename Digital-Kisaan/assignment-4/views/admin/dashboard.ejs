@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #28a745;
+            --sidebar-bg: #343a40;
+            --sidebar-text: #fff;
+            --bg: #f4f6f9;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            height: 100vh;
+            display: flex;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid #4a5056;
+            text-align: center;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px 20px;
+            color: #ccc;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active {
+            background-color: #495057;
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #333;
+        }
+        .btn-add {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: 600;
+        }
+        .prod-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-edit {
+            background-color: #ffc107;
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        form { display: inline; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-gauge"></i> Admin Panel
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin" class="active"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li><a href="/"><i class="fa-solid fa-store"></i> View Store</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="header">
+            <h1>Product Inventory</h1>
+            <a href="/admin/products/new" class="btn-add"><i class="fa-solid fa-plus"></i> Add New Product</a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price (Rs)</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (products.length === 0) { %>
+                        <tr>
+                            <td colspan="6" style="text-align:center; padding: 30px;">No products found in inventory.</td>
+                        </tr>
+                    <% } else { %>
+                        <% products.forEach(product => { %>
+                            <tr>
+                                <td><img src="<%= product.image %>" class="prod-img" alt="Product Image"></td>
+                                <td><strong><%= product.name %></strong></td>
+                                <td><%= product.category %></td>
+                                <td><%= product.price.toLocaleString() %></td>
+                                <td><%= product.stock %></td>
+                                <td class="actions">
+                                    <a href="/admin/products/edit/<%= product._id %>" class="btn-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <!-- Delete Form -->
+                                    <form action="/admin/products/delete/<%= product._id %>" method="POST" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete `<%= product.name %>`?');">
+                                        <button type="submit" class="btn-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>
