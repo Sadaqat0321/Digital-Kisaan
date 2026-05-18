@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Digital Kisaan' %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <!-- Load jQuery in the head so inline scripts inside EJS templates have immediate access to $ -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-main">
+            <div class="container header-container">
+                <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">Digital <span>Kisaan</span></a></div>
+
+                <!-- Search bar submitting to /products -->
+                <form action="/products" method="GET" class="search-bar" style="margin:0; flex:1; max-width:600px; display:flex">
+                    <input type="text" name="search" placeholder="Search for seeds, fertilizers, or tools..." value="<%= typeof search !== 'undefined' ? search : '' %>" style="flex:1;">
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+
+                <div class="header-actions">
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <% if (user.role === 'admin') { %>
+                            <a href="/admin" class="login-btn" style="background:#dc3545; color:white; border-color:#dc3545;">Admin Panel</a>
+                        <% } %>
+                        <span style="font-weight:bold; margin-right: 15px;">Welcome, <%= user.name %>!</span>
+                        <a href="/logout" class="login-btn" style="background:#6c757d; color:white; border-color:#6c757d;">Logout</a>
+                    <% } else { %>
+                        <a href="/login" class="login-btn">Login / Register</a>
+                    <% } %>
+                    <a href="/checkout" class="cart-btn">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-text">Cart</span>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="header-nav">
+            <div class="container nav-container">
+                <nav class="nav-links" id="navLinks">
+                    <a href="/" class="<%= typeof title !== 'undefined' && title.includes('Home') ? 'active' : '' %>">Home</a>
+                    <a href="/products" class="<%= typeof title !== 'undefined' && title.includes('Marketplace') ? 'active' : '' %>">Marketplace</a>
+                    <a href="/onsale-products" class="<%= typeof title !== 'undefined' && title.includes('On Sale') ? 'active' : '' %>" style="color:#ffd54f; font-weight:bold;">🔥 On Sale</a>
+                    <a href="#">Sell Your Crops</a>
+                    <a href="#">Farming Knowledge</a>
+                    <a href="#">Simulate Market</a>
+                </nav>
+                <div class="nav-contact">
+                    <i class="fa-solid fa-headset"></i> Support: +92 300 1234567
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Flash Alerts -->
+    <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+        <div style="background-color: #f8d7da; color: #721c24; padding: 15px; text-align:center; font-weight:bold; max-width: 1200px; margin: 20px auto 0; border-radius: 6px;"><%= error %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+        <div style="background-color: #d4edda; color: #155724; padding: 15px; text-align:center; font-weight:bold; max-width: 1200px; margin: 20px auto 0; border-radius: 6px;"><%= success %></div>
+    <% } %>
+
+    <!-- Injected Page Content -->
+    <main>
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo footer-logo">
+                        <i class="fa-solid fa-leaf"></i> Digital<span>Kisaan</span>
+                    </div>
+                    <p>Connecting farmers with technology for a better tomorrow.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="/products">Shop</a></li>
+                        <li><a href="#">Sell Crops</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Customer Care</h4>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Returns</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Newsletter</h4>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your Email">
+                        <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Digital Kisaan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Nav Script -->
+    <script src="/script.js"></script>
+</body>
+</html>

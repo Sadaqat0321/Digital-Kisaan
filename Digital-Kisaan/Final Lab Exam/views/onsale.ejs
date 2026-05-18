@@ -1,0 +1,138 @@
+<!-- On Sale Hero Section -->
+<section class="hero" style="background: linear-gradient(135deg, #FF9800 0%, #F57C00 50%, #E65100 100%); color: white; padding: 60px 0;">
+    <div class="container hero-container" style="grid-template-columns: 1fr; text-align: center;">
+        <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
+            <h1 style="color: white; font-size: 3rem; margin-bottom: 15px;"><i class="fa-solid fa-fire"></i> 🔥 Hot On-Sale Deals!</h1>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.15rem; margin-bottom: 0;">
+                Massive price cuts on high-quality farming goods. Order now to get premium discounts directly at your doorstep!
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- On-Sale Products Section -->
+<section class="section" style="padding: 50px 0;">
+    <div class="container">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #F57C00; padding-bottom: 15px;">
+            <h2 style="color: #E65100; font-size: 2rem; margin: 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-tags"></i> Promotional Items
+            </h2>
+            <span style="background: #E65100; color: white; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;">
+                <%= products.length %> Deals Available
+            </span>
+        </div>
+
+        <% if (products.length === 0) { %>
+            <div style="text-align: center; padding: 60px 20px; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
+                <i class="fa-solid fa-tag" style="font-size: 3.5rem; color: #ffcc80; margin-bottom: 20px; display: block;"></i>
+                <h3 style="color: #666; font-size: 1.3rem;">There are no products on sale at this moment.</h3>
+                <p style="color: #888; margin: 10px 0 20px;">Check back later or explore the full catalog!</p>
+                <a href="/products" class="btn btn-primary">Go to Marketplace</a>
+            </div>
+        <% } else { %>
+            
+            <!-- Product Grid containing all items loaded via SSR -->
+            <div id="product-list" class="product-grid">
+                <% products.forEach(product => { %>
+                    <% 
+                        const discount = product.oldPrice 
+                            ? Math.round((1 - (product.price / product.oldPrice)) * 100) 
+                            : 0;
+                    %>
+                    <div class="product-card sale-card">
+                        <div class="product-img">
+                            <img src="<%= product.image %>" alt="<%= product.name %>">
+                            <span class="badge sale">SALE</span>
+                            <% if (discount > 0) { %>
+                                <span class="badge" style="background: #E65100; left: auto; right: 10px;">-<%= discount %>%</span>
+                            <% } %>
+                        </div>
+                        <div class="product-info">
+                            <span class="category"><%= product.category %></span>
+                            <h3><%= product.name %></h3>
+                            <div class="price" style="color: #E65100;">
+                                ₨ <%= product.price.toLocaleString() %>
+                                <% if (product.oldPrice) { %>
+                                    <span class="old-price">₨ <%= product.oldPrice.toLocaleString() %></span>
+                                <% } %>
+                            </div>
+                            <div class="rating">
+                                <i class="fa-solid fa-star"></i> <%= product.rating %> (<%= product.stock %> in stock)
+                            </div>
+                            <button class="btn btn-outline full-width" style="border-color: #E65100; color: #E65100;" onmouseover="this.style.backgroundColor='#E65100'; this.style.color='white'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#E65100'">Add to Cart</button>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+
+            <!-- Client-Side jQuery Pagination controls -->
+            <div id="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 40px; padding: 20px; background: white; border-radius: var(--radius); box-shadow: var(--shadow);">
+                <button id="prev-btn" class="btn btn-secondary" style="background-color: #E65100;" disabled>
+                    <i class="fa-solid fa-chevron-left"></i> Previous
+                </button>
+                <span id="page-indicator" style="font-weight: bold; font-size: 1.05rem; padding: 10px 20px; background: var(--background-color); border: 1px solid #ddd; border-radius: var(--radius); min-width: 140px; text-align: center;">
+                    Page 1 of 1
+                </span>
+                <button id="next-btn" class="btn btn-secondary" style="background-color: #E65100;">
+                    Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+        <% } %>
+    </div>
+</section>
+
+<!-- jQuery Pagination Logic -->
+<script>
+$(document).ready(function() {
+    const ITEMS_PER_PAGE = 10;
+    
+    // Select all the rendered sale cards
+    const $cards = $('#product-list .sale-card');
+    const totalCards = $cards.length;
+    const totalPages = Math.ceil(totalCards / ITEMS_PER_PAGE);
+    
+    let currentPage = 1;
+    
+    // Function to render the correct page segment
+    function showPage(page) {
+        $cards.hide();
+        
+        const start = (page - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        
+        $cards.slice(start, end).show();
+        
+        $('#page-indicator').text('Page ' + page + ' of ' + totalPages);
+        
+        $('#prev-btn').prop('disabled', page === 1);
+        $('#next-btn').prop('disabled', page === totalPages);
+    }
+    
+    // Initial load
+    if (totalCards === 0) {
+        $('#pagination-controls').hide();
+    } else {
+        showPage(1);
+    }
+    
+    // Next Button Click
+    $('#next-btn').on('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+            $('html, body').animate({ scrollTop: $('#product-list').offset().top - 120 }, 250);
+        }
+    });
+    
+    // Previous Button Click
+    $('#prev-btn').on('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+            $('html, body').animate({ scrollTop: $('#product-list').offset().top - 120 }, 250);
+        }
+    });
+});
+</script>
